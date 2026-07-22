@@ -24,4 +24,4 @@ This model has some limitations. There are many more features like genre, publis
 ## Attribution
 Data sourced from [BoardGameGeek](https://boardgamegeek.com).
 
-[![Powered by BGG](powered_by_BGG_01_SM.png)](https://boardgamegeek.com)
+[![Powered by BGG](assets/powered_by_BGG_01_SM.png)](https://boardgamegeek.com)
