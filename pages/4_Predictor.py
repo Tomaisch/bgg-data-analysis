@@ -34,18 +34,20 @@ def search_game_name(game_name):
 def get_game_details(game_id):
     url = f"https://boardgamegeek.com/xmlapi2/thing?id={game_id}&type=boardgame&stats=1"
     response = requests.get(url, headers=headers)
-    print(response.text[:500])
     root = ET.fromstring(response.text)
     for item in root.findall('item'):
-        game_details = {}
-        game_details['id'] = item.get('id')
-        game_details['name'] = item.find("name[@type='primary']").get('value')
-        game_details['yearpublished'] = item.find('yearpublished').get('value')
-        game_details['minplaytime'] = item.find('minplaytime').get('value')
-        stats = item.find('statistics/ratings')
-        game_details['bayesaverage'] = stats.find('bayesaverage').get('value')
-        game_details['complexity'] = stats.find('averageweight').get('value')
-    return game_details
+        try:
+            game_details = {}
+            game_details['id'] = item.get('id')
+            game_details['name'] = item.find("name[@type='primary']").get('value')
+            game_details['yearpublished'] = item.find('yearpublished').get('value')
+            game_details['minplaytime'] = item.find('minplaytime').get('value')
+            stats = item.find('statistics/ratings')
+            game_details['bayesaverage'] = stats.find('bayesaverage').get('value')
+            game_details['complexity'] = stats.find('averageweight').get('value')
+            return game_details
+        except:
+            return None
 
 
 
@@ -64,31 +66,34 @@ if game_name:
         game_id = options[selected]
 
         details = get_game_details(game_id)
+        if details is None:
+            st.warning('Could not load details for this game. Please select another one.')
 
-        st.write(f"Year published: {details['yearpublished']}")
-        st.write(f"Complexity: {details['complexity']}")
-        st.write(f"Min playtime: {details['minplaytime']}")
-        st.write(f"Bayesaverage (real): {details['bayesaverage']}")
+        else:
+            st.write(f"Year published: {details['yearpublished']}")
+            st.write(f"Complexity: {details['complexity']}")
+            st.write(f"Min playtime: {details['minplaytime']}")
+            st.write(f"Bayesaverage (real): {details['bayesaverage']}")
 
-        features = np.array([[details['minplaytime'], details['yearpublished'], details['complexity']]], dtype=float)
-        features_scaled = scaler.transform(features)
-        st.markdown('### Game details')
-        prediction = model.predict(features_scaled)
-        st.write(f"Predicted bayesaverage: {round(prediction[0], 2)}")
+            features = np.array([[details['minplaytime'], details['yearpublished'], details['complexity']]], dtype=float)
+            features_scaled = scaler.transform(features)
+            st.markdown('### Game details')
+            prediction = model.predict(features_scaled)
+            st.write(f"Predicted bayesaverage: {round(prediction[0], 2)}")
 
-        st.markdown('### Predicted score')
-        st.markdown('### Why this score?')
-        st.markdown('The waterfall plot below shows how each feature contributed to the predicted score. The base value is the average prediction of the model. Each feature then pushes the prediction up or down.')
-        explainer = joblib.load('explainer.pkl')
-        features_df = pd.DataFrame([[float(details['minplaytime']), float(details['yearpublished']), float(details['complexity'])]], 
-                                    columns=['minplaytime', 'yearpublished', 'complexity'])
-        features_scaled = scaler.transform(features_df)
-        shap_values = explainer.shap_values(features_scaled)
+            st.markdown('### Predicted score')
+            st.markdown('### Why this score?')
+            st.markdown('The waterfall plot below shows how each feature contributed to the predicted score. The base value is the average prediction of the model. Each feature then pushes the prediction up or down.')
+            explainer = joblib.load('explainer.pkl')
+            features_df = pd.DataFrame([[float(details['minplaytime']), float(details['yearpublished']), float(details['complexity'])]], 
+                                        columns=['minplaytime', 'yearpublished', 'complexity'])
+            features_scaled = scaler.transform(features_df)
+            shap_values = explainer.shap_values(features_scaled)
 
-        fig, ax = plt.subplots()
-        base_value = float(explainer.expected_value) if np.ndim(explainer.expected_value) == 0 else float(explainer.expected_value[0])
-        shap.waterfall_plot(shap.Explanation(values=shap_values[0], 
-                                            base_values = base_value,
-                                            data=features_df.values[0],
-                                            feature_names=['minplaytime', 'yearpublished', 'complexity']))
-        st.pyplot(fig)
+            fig, ax = plt.subplots()
+            base_value = float(explainer.expected_value) if np.ndim(explainer.expected_value) == 0 else float(explainer.expected_value[0])
+            shap.waterfall_plot(shap.Explanation(values=shap_values[0], 
+                                                base_values = base_value,
+                                                data=features_df.values[0],
+                                                feature_names=['minplaytime', 'yearpublished', 'complexity']))
+            st.pyplot(fig)
