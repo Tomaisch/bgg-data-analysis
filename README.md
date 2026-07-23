@@ -1,5 +1,7 @@
 # BGG Score Predictor
 
+[Live App](https://bgg-data-analysis-gxzshzn34hqk4zhzuafgcc.streamlit.app)
+
 ## Project Description
 In this project I predicted the bayesaverage score of board and card games using the 5000 most rated games on BoardGameGeek.
 
