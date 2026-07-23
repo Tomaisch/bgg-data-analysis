@@ -9,7 +9,7 @@ import xml.etree.ElementTree as ET
 import matplotlib.pyplot as plt
 import shap
 
-load_dotenv()
+
 token = os.getenv('BGG_TOKEN')
 headers = {'Authorization': f'Bearer {token}'}
 
