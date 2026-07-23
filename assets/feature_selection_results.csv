@@ -1,0 +1,8 @@
+,SelectKBest,Lasso_embedded,RandomForest_embedded,LinearRegression_wrapper,RandomForest_wrapper
+yearpublished,True,True,True,True,True
+minplayers,False,False,True,False,True
+maxplayers,False,True,True,False,True
+minplaytime,False,True,True,True,True
+maxplaytime,True,False,True,False,True
+minage,True,False,True,False,True
+complexity,True,True,True,True,True
