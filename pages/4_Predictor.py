@@ -79,7 +79,7 @@ if game_name:
             features_scaled = scaler.transform(features)
             st.markdown('### Game details')
             prediction = model.predict(features_scaled)
-            st.write(f"Predicted bayesaverage: {round(prediction[0], 2)}")
+            st.write(f"Predicted bayesaverage: {round(prediction[0], 5)}")
 
             st.markdown('### Predicted score')
             st.markdown('### Why this score?')
