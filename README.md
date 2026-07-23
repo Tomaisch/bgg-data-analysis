@@ -4,7 +4,7 @@
 In this project I predicted the bayesaverage score of board and card games using the 5000 most rated games on BoardGameGeek.
 
 The bayesaverage score is a score that calculates the average score based on the number of votes. It is based on an additional fictional 1500 neutral scores, which are added by BoardGameGeek. This procedure makes the bayesaverage score a fairer score than just the average score on its own.
-There is an interactive Web-App where the whole pipeline is explained in detail and you can also try the model to predict the score for your favorite game
+There is an interactive Web-App where the whole pipeline is explained in detail and you can also try the model to predict the score of your favorite game
 ## Approach
 For this project I used the BGG API and the available boardgames_ranks.csv to get the data. I merged these two datasets and filtered only the 5000 most voted games, which were then used for further investigation. A heatmap of the correlation matrix and several boxplots showed that some features are more correlated with the target than others and that some features had extreme values and outliers. I deleted the extreme values and used RobustScaler. After that I did five different feature selection approaches to identify the most important features, which I used for training the models. To predict the bayesaverage score I used several approaches: Linear Regression, Lasso, Random Forest, Lasso with cross-validation and grid search, and Random Forest with cross-validation and grid search.
 
